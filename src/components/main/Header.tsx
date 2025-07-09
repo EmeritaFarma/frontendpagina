@@ -22,24 +22,21 @@ export default function Header() {
 
   const { pathname } = useLocation();
 
-  /* ───────── Scroll / cambio de ruta ───────── */
+  /* ───────── manejar scroll / cambio de ruta ───────── */
   useEffect(() => {
     const onScroll = () => {
       setIsScrolledHeader(window.scrollY > 0 || pathname !== "/");
     };
-
     window.addEventListener("scroll", onScroll);
-    // actualiza inmediatamente al cambiar de ruta
-    onScroll();
+    onScroll(); // evalúa al montar / cuando cambia la ruta
 
-    // cierra drawer móvil al cambiar de página
+    // cerrar drawer y carrito al navegar
     setMobileOpen(false);
     setshowCart(false);
 
     return () => window.removeEventListener("scroll", onScroll);
   }, [pathname]);
 
-  /* ────────────────────── Render ────────────────────── */
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-shadow ${
@@ -58,7 +55,7 @@ export default function Header() {
           />
         </Link>
 
-        {/* ENLACES DESKTOP */}
+        {/* LINKS DESKTOP */}
         <nav className="hidden md:flex gap-6">
           {links.map((l) => (
             <Link
@@ -73,23 +70,28 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* BOTÓN HAMBURGUESA (MÓVIL) */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setMobileOpen((prev) => !prev)}
-        >
-          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M4 6h16M4 12h16M4 18h16"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        {/* BOTONES: hamburguesa + carrito */}
+        <div className="flex items-center">
+          {/* botón hamburguesa: visible solo < md */}
+          <button
+            className="md:hidden p-2"
+            onClick={() => setMobileOpen((prev) => !prev)}
+          >
+            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M4 6h16M4 12h16M4 18h16"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
 
-        {/* BOTÓN CARRITO */}
-        <CartButton setshowCart={setshowCart} />
+          {/* carrito: negro ≥ md, blanco en móvil */}
+          <div className="text-white md:text-black">
+            <CartButton setshowCart={setshowCart} />
+          </div>
+        </div>
       </div>
 
       {/* MENÚ MÓVIL */}
