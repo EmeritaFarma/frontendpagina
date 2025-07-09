@@ -1,23 +1,34 @@
-import { useCart } from "@/hooks/use-cart"
-import { cn } from "@/lib/utils"
-import { useMemo } from "react"
+import { useMemo } from "react";
+import { ShoppingCart } from "lucide-react";
+
+import { useCart } from "@/hooks/use-cart";
+import { cn } from "@/lib/utils";
 
 interface Props {
-    setshowCart: React.Dispatch<React.SetStateAction<boolean>>
+  setshowCart: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export default function CartButton({setshowCart}: Props) {
 
-    const { getTotalItems , items} = useCart()
+export default function CartButton({ setshowCart }: Props) {
+  const { getTotalItems, items } = useCart();
+  const totalItems = useMemo(() => getTotalItems(), [items]);
 
-    const totalItems = useMemo(() => getTotalItems(), [items])
+  return (
+    <button
+      onClick={() => setshowCart((prev) => !prev)}
+      className="relative p-2 focus:outline-none"
+    >
+      {/* icono; hereda color del contenedor (blanco en móvil, negro en desktop) */}
+      <ShoppingCart className="w-6 h-6 text-inherit" />
 
-
-    return (
-        <button className="cart-btn" onClick={() => setshowCart(prevState => !prevState)}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-shopping-cart"><circle cx="8" cy="21" r="1" /><circle cx="19" cy="21" r="1" /><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" /></svg>
-            <div className={cn("cart-number", {active: totalItems > 0})}>
-                {totalItems}
-            </div>
-        </button>
-    )
+      {/* contador */}
+      <div
+        className={cn(
+          "absolute -top-1 -right-1 text-[10px] min-w-[18px] h-[18px] grid place-content-center rounded-full bg-primary text-white",
+          { hidden: totalItems === 0 }
+        )}
+      >
+        {totalItems}
+      </div>
+    </button>
+  );
 }
