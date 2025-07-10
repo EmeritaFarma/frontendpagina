@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import LogoTransparent from "@/assets/img/logo-transparent.png";
-import Logo from "@/assets/img/logo.png";
 
 import Cart from "./cart/Cart";
 import CartButton from "./cart/CartButton";
@@ -16,7 +15,7 @@ const links: { name: string; to: string }[] = [
 ];
 
 export default function Header() {
-  const [isScrolledHeader, setIsScrolledHeader] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showCart, setshowCart] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -24,11 +23,9 @@ export default function Header() {
 
   /* ───────── manejar scroll / cambio de ruta ───────── */
   useEffect(() => {
-    const onScroll = () => {
-      setIsScrolledHeader(window.scrollY > 0 || pathname !== "/");
-    };
+    const onScroll = () => setIsScrolled(window.scrollY > 0);
     window.addEventListener("scroll", onScroll);
-    onScroll(); // evalúa al montar / cuando cambia la ruta
+    onScroll();
 
     // cerrar drawer y carrito al navegar
     setMobileOpen(false);
@@ -39,20 +36,16 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-shadow ${
-        isScrolledHeader
-          ? "bg-white/80 backdrop-blur shadow-md text-black"
-          : "bg-transparent text-white"
-      }`}
+      className={`
+        fixed top-0 inset-x-0 z-50 transition-shadow
+        bg-transparent text-white
+        ${isScrolled ? "backdrop-blur shadow-md" : ""}
+      `}
     >
       <div className="container flex items-center justify-between h-16">
-        {/* LOGO */}
+        {/* LOGO – siempre con fondo transparente */}
         <Link to="/" className="flex-shrink-0">
-          <img
-            src={isScrolledHeader ? Logo : LogoTransparent}
-            alt="logo"
-            className="h-10"
-          />
+          <img src={LogoTransparent} alt="logo" className="h-10" />
         </Link>
 
         {/* LINKS DESKTOP */}
@@ -72,7 +65,7 @@ export default function Header() {
 
         {/* BOTONES: hamburguesa + carrito */}
         <div className="flex items-center">
-          {/* botón hamburguesa: visible solo < md */}
+          {/* hamburguesa visible sólo en móvil */}
           <button
             className="md:hidden p-2"
             onClick={() => setMobileOpen((prev) => !prev)}
@@ -87,16 +80,14 @@ export default function Header() {
             </svg>
           </button>
 
-          {/* carrito: negro ≥ md, blanco en móvil */}
-          <div className="text-white md:text-black">
-            <CartButton setshowCart={setshowCart} />
-          </div>
+          {/* carrito – blanco en todos los breakpoints */}
+          <CartButton setshowCart={setshowCart} />
         </div>
       </div>
 
       {/* MENÚ MÓVIL */}
       {mobileOpen && (
-        <nav className="md:hidden bg-white shadow-lg">
+        <nav className="md:hidden bg-white text-black shadow-lg">
           <ul className="flex flex-col">
             {links.map((l) => (
               <li key={l.to}>
