@@ -39,7 +39,7 @@ export default function Maps({ branch }: { branch: Branch[] }) {
       <MapContainer
         center={position}
         zoom={13}
-        className="w-full h-[55vh] sm:h-[400px]" /* responsive: 55 vh móvil, 400 px en ≥640 px */
+        className="leaflet-map" /* responsive: 55 vh móvil, 400 px en ≥640 px */
         zoomControl={false}
         scrollWheelZoom
       >

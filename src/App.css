@@ -852,7 +852,7 @@ button{
     margin-top: 3rem;
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: 1fr 280px;
+    
 }
 .contacts{
     max-height: 400px;
@@ -1194,4 +1194,37 @@ border-right: 1px solid #ebebeb;
 .custom-marker {
   opacity: 1 !important;
   filter: none;
+}
+
+
+/* === Responsive fix for map & contacts === */
+@media (min-width:768px){
+  .main-branch__grid,
+  .branch__grid{
+    grid-template-columns: 1fr 280px;   /* mapa | lista */
+  }
+}
+
+@media (max-width:767px){
+  .branch__map,
+  .contacts{
+    width:100%;
+  }
+
+  .contacts{
+    max-height:none;
+    overflow-y:visible;
+  }
+
+  /* Opcional: el mapa primero en móvil */
+  .branch__map{
+    order:1;
+  }
+}
+
+/* Leaflet map container */
+.leaflet-map{
+  width:100%;
+  height:clamp(300px,40vh,400px);
+  border-radius:12px;
 }
