@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from "react-leaflet";
-import L from "leaflet";
+import type L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { Branch } from "@/lib/types/branch";
@@ -9,7 +9,7 @@ import { formatTextSchedule, generateContacts } from "@/lib/utils";
 import { Calendar, Map, MapPin, Phone, Route, Smartphone } from "lucide-react";
 import { Button } from "../ui/button";
 
-/* icono personalizado */
+/* Icono de marcador personalizado */
 import customIconUrl from "@/assets/img/marker-icon.png";
 const customMarker = new L.Icon({
   iconUrl: customIconUrl,
@@ -19,29 +19,31 @@ const customMarker = new L.Icon({
   className: "custom-marker",
 });
 
-export default function Maps({ branch }: { branch: Branch[] }) {
-  const markerRefs = useRef<Array<L.Marker | null>>([]);
+interface MapsProps {
+  branch: Branch[];
+}
+
+export default function Maps({ branch }: MapsProps) {
+  /* refs para abrir pop-ups desde el listado */
+  const markerRefs = useRef<(L.Marker | null)[]>([]);
   const [searchParams] = useSearchParams();
-  const index = searchParams.get("index") ? +(searchParams.get("index") as string) : null;
+  const index = searchParams.get("index") ? Number(searchParams.get("index")) : null;
 
-  const position: [number, number] = [20.9671, -89.5926]; // Mérida
+  const center: [number, number] = [20.9671, -89.5926]; // Mérida, MX
 
-  /* abrir popup desde listado */
   useEffect(() => {
-    if (index === null) return;
-    const marker = markerRefs.current[index];
-    if (marker) marker.openPopup();
+    if (index == null) return;
+    markerRefs.current[index]?.openPopup();
   }, [index]);
 
   return (
-    /* contenedor flexible */
     <div className="w-full overflow-hidden rounded-lg">
       <MapContainer
-        center={position}
+        center={center}
         zoom={13}
-        className="leaflet-map" /* responsive: 55 vh móvil, 400 px en ≥640 px */
+        className="leaflet-map"   /* altura responsiva vía CSS */
         zoomControl={false}
-        scrollWheelZoom
+        scrollWheelZoom={true}
       >
         <ZoomControl position="bottomright" />
 
@@ -50,8 +52,9 @@ export default function Maps({ branch }: { branch: Branch[] }) {
           attribution="© OpenStreetMap"
         />
 
-        {branch?.map((item, i) => {
+        {branch.map((item, i) => {
           const { cel, tel } = generateContacts(item.contact ?? []);
+
           return (
             <Marker
               key={i}
@@ -63,7 +66,7 @@ export default function Maps({ branch }: { branch: Branch[] }) {
                 <div className="font-primary text-sm text-gray-700">
                   <h3 className="text-base font-semibold text-primary">{item.name}</h3>
 
-                  {/* dirección */}
+                  {/* Dirección */}
                   <div className="mt-2 space-y-1">
                     <div className="flex items-center gap-2 text-gray-500">
                       <MapPin size={14} />
@@ -72,12 +75,12 @@ export default function Maps({ branch }: { branch: Branch[] }) {
                         {item.location?.colony}
                       </span>
                     </div>
-                    <div className="text-xs text-gray-500 ml-5">
+                    <div className="ml-5 text-xs text-gray-500">
                       {item.location?.city}, {item.location?.state} {item.location?.zipCode}
                     </div>
 
-                    {/* contactos */}
-                    <div className="flex items-center gap-2 mt-1 text-gray-500">
+                    {/* Contactos */}
+                    <div className="mt-1 flex items-center gap-2 text-gray-500">
                       <Phone size={14} />
                       <span className="text-xs">{tel?.join(", ")}</span>
                     </div>
@@ -86,7 +89,7 @@ export default function Maps({ branch }: { branch: Branch[] }) {
                       <span className="text-xs">{cel?.join(", ")}</span>
                     </div>
 
-                    {/* horarios */}
+                    {/* Horarios */}
                     <div className="mt-1">
                       <div className="flex items-center gap-2 text-gray-500">
                         <Calendar size={14} />
@@ -105,7 +108,7 @@ export default function Maps({ branch }: { branch: Branch[] }) {
                     </div>
                   </div>
 
-                  {/* acciones */}
+                  {/* Acciones */}
                   <div className="mt-4 flex items-center gap-4">
                     <Button asChild variant="link" style={{ color: "var(--color-primary)" }}>
                       <Link
