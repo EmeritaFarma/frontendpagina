@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-import LogoTransparent from "@/assets/img/logo-transparent.png";
+import LogoTransparent from "@/assets/img/logo-transparent.png"; // blanco
+import Logo from "@/assets/img/logo.png";                        // para fondo claro
 
 import Cart from "./cart/Cart";
 import CartButton from "./cart/CartButton";
@@ -41,9 +42,13 @@ export default function Header() {
       `}
     >
       <div className="container flex items-center justify-between h-16">
-        {/* LOGO (siempre transparente) */}
+        {/* LOGO cambia según scroll */}
         <Link to="/" className="flex-shrink-0">
-          <img src={LogoTransparent} alt="logo" className="h-10" />
+          <img
+            src={isScrolled ? Logo : LogoTransparent}
+            alt="Emérita Farmacias"
+            className="h-10"
+          />
         </Link>
 
         {/* LINKS DESKTOP */}
