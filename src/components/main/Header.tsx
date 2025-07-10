@@ -18,16 +18,15 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showCart, setshowCart] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const { pathname } = useLocation();
 
-  /* ───────── manejar scroll / cambio de ruta ───────── */
+  /* ───────── evaluar scroll y ruta ───────── */
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 0);
     window.addEventListener("scroll", onScroll);
     onScroll();
 
-    // cerrar drawer y carrito al navegar
+    /* al navegar, cerramos drawer y carrito */
     setMobileOpen(false);
     setshowCart(false);
 
@@ -37,13 +36,12 @@ export default function Header() {
   return (
     <header
       className={`
-        fixed top-0 inset-x-0 z-50 transition-shadow
-        bg-transparent text-white
-        ${isScrolled ? "backdrop-blur shadow-md" : ""}
+        fixed top-0 inset-x-0 z-50 transition-colors duration-300
+        ${isScrolled ? "bg-white/80 backdrop-blur shadow-md text-black" : "bg-transparent text-white"}
       `}
     >
       <div className="container flex items-center justify-between h-16">
-        {/* LOGO – siempre con fondo transparente */}
+        {/* LOGO (siempre transparente) */}
         <Link to="/" className="flex-shrink-0">
           <img src={LogoTransparent} alt="logo" className="h-10" />
         </Link>
@@ -63,9 +61,9 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* BOTONES: hamburguesa + carrito */}
+        {/* BOTONES */}
         <div className="flex items-center">
-          {/* hamburguesa visible sólo en móvil */}
+          {/* hamburguesa visible sólo < md */}
           <button
             className="md:hidden p-2"
             onClick={() => setMobileOpen((prev) => !prev)}
@@ -80,8 +78,10 @@ export default function Header() {
             </svg>
           </button>
 
-          {/* carrito – blanco en todos los breakpoints */}
-          <CartButton setshowCart={setshowCart} />
+          {/* carrito: cambia color con scroll */}
+          <div className={isScrolled ? "text-black" : "text-white"}>
+            <CartButton setshowCart={setshowCart} />
+          </div>
         </div>
       </div>
 
